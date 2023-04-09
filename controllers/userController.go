@@ -30,16 +30,7 @@ func UserRegister(c *gin.Context) {
 		c.ShouldBind(&User)
 	}
 
-	err := db.Debug().Where("email = ?", User.Email).First(&TempUser).Error
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Bad Request",
-			"message": err.Error(),
-		})
-		return
-	}
-
+	db.Where("email = ?", User.Email).First(&TempUser)
 	checkUser := HasData(&TempUser)
 
 	if checkUser {
@@ -50,7 +41,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
-	err = db.Debug().Create(&User).Error
+	err := db.Debug().Create(&User).Error
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -64,6 +55,7 @@ func UserRegister(c *gin.Context) {
 		"id": User.ID,
 		"email": User.Email,
 		"username": User.Username,
+		"isadmin": User.IsAdmin,
 	})
 }
 
@@ -80,13 +72,15 @@ func UserLogin(c *gin.Context) {
 	}
 
 	password := User.Password
-	err := db.Debug().Where("email = ?", User.Email).Take(&User).Error
+
+	err := db.Where("email = ?", User.Email).First(&User).Error
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 			"message": "Email is not found!",
 		})
+		return
 	}
 
 	comparePass := helpers.ComparePass([]byte(User.Password), []byte(password))
@@ -96,9 +90,10 @@ func UserLogin(c *gin.Context) {
 			"error": "Unauthorized",
 			"message": "Password incorrect!",
 		})
+		return
 	}
 
-	token := helpers.GenerateToken(User.ID, User.Email)
+	token := helpers.GenerateToken(User.ID, User.Email, User.IsAdmin)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,

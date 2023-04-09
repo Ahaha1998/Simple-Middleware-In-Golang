@@ -1,6 +1,7 @@
 package database
 
 import (
+	"challenge-12/models"
 	"fmt"
 	"log"
 
@@ -27,7 +28,7 @@ func StartDB() {
 	}
 
 	fmt.Println("Success connecting to database.")
-	db.Debug().AutoMigrate()
+	db.Debug().AutoMigrate(models.UserModel{}, models.ProductModel{})
 }
 
 func GetDB() *gorm.DB {

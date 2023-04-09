@@ -10,11 +10,11 @@ type ProductModel struct {
 	Title string `json:"title" form:"title" valid:"required~Product title is required!"`
 	Description string `json:"desc" form:"desc" valid:"required~Product description is required!"`
 	UserId uint
-	User UserModel
+	User *UserModel
 }
 
-func (b *ProductModel) BeforeCreate(tx *gorm.DB) (err error) {
-	_, errCreate := govalidator.ValidateStruct(b)
+func (p *ProductModel) BeforeCreate(tx *gorm.DB) (err error) {
+	_, errCreate := govalidator.ValidateStruct(p)
 
 	if errCreate != nil {
 		err = errCreate
@@ -25,8 +25,8 @@ func (b *ProductModel) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (b *ProductModel) BeforeUpdate(tx *gorm.DB) (err error) {
-	_, errUpdate := govalidator.ValidateStruct(b)
+func (p *ProductModel) BeforeUpdate(tx *gorm.DB) (err error) {
+	_, errUpdate := govalidator.ValidateStruct(p)
 
 	if errUpdate != nil {
 		err = errUpdate

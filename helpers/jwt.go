@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -10,10 +11,12 @@ import (
 
 var secretKey = "dumbwaystodie"
 
-func GenerateToken(id uint, email string) string {
+func GenerateToken(id uint, email string, isadmin bool) string {
+	fmt.Println(isadmin)
 	claims := jwt.MapClaims{
 		"id": id,
 		"email": email,
+		"isadmin": isadmin,
 	}
 
 	parseToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

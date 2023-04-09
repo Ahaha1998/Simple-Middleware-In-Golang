@@ -11,8 +11,9 @@ type UserModel struct {
 	gorm.Model
 	Username string `gorm:"not null" json:"username" form:"username" valid:"required~Username is required!"`
 	Email string `gorm:"not null;uniqueIndex" json:"email" form:"email" valid:"required~Email is required!,email~Invalid format email!"`
-	Password string `gorm:"not null" json:"password" form:"password" valid:"required~Password is required!,minstringlength(6)~Password minimum length must be 6 characters!"`
-	Products []ProductModel `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"books"`
+	Password string `gorm:"not null" json:"-" form:"password" valid:"required~Password is required!,minstringlength(6)~Password minimum length must be 6 characters!"`
+	IsAdmin bool `gorm:"default:false" json:"isadmin" form:"isadmin"`
+	Products []ProductModel `gorm:"foreignKey:UserId" json:"products"`
 }
 
 func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
